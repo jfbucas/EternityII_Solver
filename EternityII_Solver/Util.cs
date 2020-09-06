@@ -230,7 +230,10 @@ namespace EternityII_Solver
 
         public static void Save_Board(RotatedPiece[] board, ushort maxSolveIndex)
         {
+            var board_pieces = Get_Pieces();
+
             StringBuilder entire_board = new StringBuilder();
+            StringBuilder url = new StringBuilder();
 
             for (int i = 15; i >= 0; i--)
             {
@@ -241,10 +244,40 @@ namespace EternityII_Solver
                     if (board[i * 16 + j].PieceNumber > 0)
                     {
                         row.Append(string.Format("{0}/{1} ", (((int)board[i * 16 + j].PieceNumber)).ToString().PadLeft(3, ' '), board[i * 16 + j].Rotations));
+			Piece p = new Piece();
+
+			foreach (var k in board_pieces)
+				if (k.PieceNumber == board[i * 16 + j].PieceNumber) { p=k; break; }
+
+			if (board[i * 16 + j].Rotations == 0) {
+				url.Append((char)(p.TopSide+'a'));
+				url.Append((char)(p.RightSide+'a'));
+				url.Append((char)(p.BottomSide+'a'));
+				url.Append((char)(p.LeftSide+'a'));
+			}
+			if (board[i * 16 + j].Rotations == 1) {
+				url.Append((char)(p.LeftSide+'a'));
+				url.Append((char)(p.TopSide+'a'));
+				url.Append((char)(p.RightSide+'a'));
+				url.Append((char)(p.BottomSide+'a'));
+			}
+			if (board[i * 16 + j].Rotations == 2) {
+				url.Append((char)(p.BottomSide+'a'));
+				url.Append((char)(p.LeftSide+'a'));
+				url.Append((char)(p.TopSide+'a'));
+				url.Append((char)(p.RightSide+'a'));
+			}
+			if (board[i * 16 + j].Rotations == 3) {
+				url.Append((char)(p.RightSide+'a'));
+				url.Append((char)(p.BottomSide+'a'));
+				url.Append((char)(p.LeftSide+'a'));
+				url.Append((char)(p.TopSide+'a'));
+			}
                     }
                     else
                     {
                         row.Append("---/- ");
+                        url.Append("aaaa");
                     }
                 }
 
@@ -252,6 +285,9 @@ namespace EternityII_Solver
             }
 
             string board_string = entire_board.ToString();
+            board_string += "\n";
+            board_string += "https://e2.bucas.name/#puzzle=Joshua_Blackwood&board_w=16&board_h=16&board_edges=" + url + "&motifs_order=jblackwood";
+
             Guid? g = null;
 
             using (MD5 md5 = MD5.Create())
